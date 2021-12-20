@@ -31,6 +31,7 @@ final class PokemonView: CodedView {
     
     struct Model {
         let pokemonName: String
+        let textColor: UIColor
     }
     
     // MARK: - UI Components
@@ -58,5 +59,6 @@ final class PokemonView: CodedView {
     
     func configure(using model: Model) {
         pokemonNameLabel.text = model.pokemonName
+        pokemonNameLabel.textColor = model.textColor
     }
 }

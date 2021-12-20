@@ -1,10 +1,14 @@
 import UIKit
 
+protocol PokemonListDisplayLogic: AnyObject {
+    func displayPokemons(_ viewModel: PokemonListSceneModel.FetchPokemons.ViewModel)
+}
+
 final class PokemonListViewController: UIViewController {
     // MARK: - Dependencies
     
     private let pokemonAdapter: PokemonListAdapting
-    private var viewModel: PokemonListViewModelProtocol
+    private let interactor: PokemonListBusinessLogic
     
     // MARK: - Properties
     
@@ -15,10 +19,10 @@ final class PokemonListViewController: UIViewController {
     // MARK: - Initialization
     
     init(pokemonAdapter: PokemonListAdapting,
-         viewModel: PokemonListViewModelProtocol
+         interactor: PokemonListBusinessLogic
     ) {
         self.pokemonAdapter = pokemonAdapter
-        self.viewModel = viewModel
+        self.interactor = interactor
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -34,27 +38,14 @@ final class PokemonListViewController: UIViewController {
             delegate: pokemonAdapter)
     }
     
-    override func viewDidLoad() {
-        bind()
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
-        viewModel.fetchPokemons()
-    }
-    
-    // MARK: - Helpers
-    
-    private func bind() {
-        viewModel.delegate = self
+        interactor.fetchPokemons(.init())
     }
 }
 
-extension PokemonListViewController: PokemonListViewModelDelegate {
-    func pokemonsDidChange() {
+extension PokemonListViewController: PokemonListDisplayLogic {
+    func displayPokemons(_ viewModel: PokemonListSceneModel.FetchPokemons.ViewModel) {
+        pokemonAdapter.configure(using: viewModel.pokemons)
         pokemonListView?.reloadData()
-    }
-    
-    func handleError() {
-        // TODO
     }
 }
